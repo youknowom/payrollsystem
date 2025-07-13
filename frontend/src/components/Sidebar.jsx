@@ -44,7 +44,7 @@ const Sidebar = () => {
 
   /* Fallback avatar */
   const fallbackImg =
-    "https://creatorspace.imgix.net/users/clrvzk60j02w4qt01696sgjtr/0mKp9xFKbvrGQJ2Y-418787584_752106519697462_6896083793320903255_n.jpg";
+    "https://ui-avatars.com/api/?name=Guest+User&background=random&color=fff";
 
   return (
     <motion.div
@@ -61,7 +61,7 @@ const Sidebar = () => {
       </button>
 
       {/* Profile image */}
-      <div className="mx-auto">
+      {/* <div className="mx-auto">
         <img
           className={`rounded-full object-cover ${
             isOpen ? "w-14 h-14" : "w-9 h-9"
@@ -69,10 +69,14 @@ const Sidebar = () => {
           src={user.image || fallbackImg}
           alt="Profile"
         />
-      </div>
+      </div> */}
 
       {/* Username */}
-      {isOpen && <p className="mt-3 text-center text-sm">{user.name}</p>}
+      {isOpen && (
+        <p className="mt-3 text-center text-sm font-semibold text-gray-700">
+          {user.organization || "Your Organization"}
+        </p>
+      )}
 
       {/* Links */}
       <div className="mt-6 flex flex-col gap-2 w-full">

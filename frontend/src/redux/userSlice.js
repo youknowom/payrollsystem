@@ -1,9 +1,9 @@
-// redux/userSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   name: "Admin",
   image: "",
+  organization: "Your Org", // ✅ Add this line
 };
 
 const userSlice = createSlice({
@@ -16,6 +16,9 @@ const userSlice = createSlice({
       }
       if (action.payload.image !== undefined) {
         state.image = action.payload.image;
+      }
+      if (action.payload.organization !== undefined) {
+        state.organization = action.payload.organization;
       }
     },
   },
