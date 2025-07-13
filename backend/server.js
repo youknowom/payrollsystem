@@ -3,6 +3,7 @@ import "dotenv/config";
 import cors from "cors";
 import connectDB from "./configs/db.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import employeeRoutes from "./routes/employeeRoutes.js";
 // initialize express app
 const app = express();
 
@@ -10,6 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/api/admin", adminRoutes);
+app.use("/api/employees", employeeRoutes);
 
 // routes
 app.get("/", (req, res) => res.send("server is running!"));

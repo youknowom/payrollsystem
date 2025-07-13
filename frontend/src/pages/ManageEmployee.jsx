@@ -1,35 +1,62 @@
 import React, { useEffect, useState } from "react";
 import Title from "../components/Title";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const ManageEmployee = () => {
   const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch employee data
+  const fetchEmployees = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/employees");
+      setEmployees(res.data);
+    } catch (err) {
+      toast.error("Failed to fetch employees");
+      console.error("Fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // TODO: Replace with real API call
-    setEmployees([
-      {
-        _id: "emp001",
-        name: "Raj Sharma",
-        phone: "9876543210",
-        image: "https://randomuser.me/api/portraits/men/75.jpg",
-        status: "active",
-      },
-      {
-        _id: "emp002",
-        name: "Amit Patil",
-        phone: "9876501234",
-        image: "https://randomuser.me/api/portraits/men/85.jpg",
-        status: "inactive",
-      },
-    ]);
+    fetchEmployees();
   }, []);
 
-  const handleStatusChange = (id, newStatus) => {
-    setEmployees((prev) =>
-      prev.map((emp) => (emp._id === id ? { ...emp, status: newStatus } : emp))
-    );
-    // TODO: Call backend API to update status
+  // Handle status change
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      await axios.put(`http://localhost:5000/api/employees/${id}/status`, {
+        status: newStatus,
+      });
+
+      setEmployees((prev) =>
+        prev.map((emp) =>
+          emp._id === id ? { ...emp, status: newStatus } : emp
+        )
+      );
+
+      toast.success("Status updated");
+    } catch (error) {
+      toast.error("Failed to update status");
+      console.error("Status update error:", error);
+    }
   };
+
+  if (loading) return <p className="px-10 pt-10">Loading employees...</p>;
+
+  if (employees.length === 0) {
+    return (
+      <div className="px-10 pt-20 text-center text-gray-500">
+        <Title
+          title="Manage Employees"
+          subTitle="View & update employee status"
+        />
+        <p className="mt-10">No employees found.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="px-4 pt-10 md:px-10 w-full">
@@ -58,6 +85,10 @@ const ManageEmployee = () => {
                 <td className="p-3 flex items-center gap-3">
                   <img
                     src={emp.image}
+                    onError={(e) =>
+                      (e.target.src =
+                        "https://via.placeholder.com/40?text=User")
+                    }
                     alt="employee"
                     className="w-10 h-10 rounded-full object-cover border"
                   />
@@ -65,7 +96,6 @@ const ManageEmployee = () => {
                 </td>
 
                 <td className="p-3 text-sm text-gray-600">{emp._id}</td>
-
                 <td className="p-3 text-sm">{emp.phone}</td>
 
                 <td className="p-3">
