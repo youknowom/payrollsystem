@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import toast from "react-hot-toast";
-import logo from "../assets/logo.svg"; // static logo
+import logo from "../assets/logo.png"; // static logo
 
 const Navbar = () => {
   const dispatch = useDispatch();
