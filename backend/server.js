@@ -4,19 +4,18 @@ import cors from "cors";
 import connectDB from "./configs/db.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import employeeRoutes from "./routes/employeeRoutes.js";
-// initialize express app
-const app = express();
+import dashboardRoutes from "./routes/dashboard.js";
 
-// middleware
+const app = express();
 app.use(cors());
 app.use(express.json());
+
 app.use("/api/admin", adminRoutes);
 app.use("/api/employees", employeeRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
-// routes
 app.get("/", (req, res) => res.send("server is running!"));
 
-// connect database and start server
 const startServer = async () => {
   try {
     await connectDB();
@@ -29,4 +28,4 @@ const startServer = async () => {
   }
 };
 
-startServer(); // ✅ Start the server
+startServer();

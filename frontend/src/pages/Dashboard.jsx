@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Title from "../components/Title";
 import { Users, UserCheck, UserX, CalendarClock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -11,10 +12,13 @@ const Dashboard = () => {
     totalLeavesPending: 0,
     recentAttendance: [],
   });
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
   const emphandleclick = () => {
     navigate("/admin/manage-employees");
   };
+
   const dashboardCards = [
     {
       onclick: emphandleclick,
@@ -40,18 +44,20 @@ const Dashboard = () => {
   ];
 
   useEffect(() => {
-    // Replace with actual API call later
-    setData({
-      totalEmployees: 18,
-      presentToday: 15,
-      absentToday: 3,
-      totalLeavesPending: 4,
-      recentAttendance: [
-        { empName: "Raj Sharma", time: "09:10 AM", status: "In" },
-        { empName: "Amit Patil", time: "09:25 AM", status: "In" },
-      ],
-    });
+    const fetchDashboard = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/dashboard");
+        setData(res.data);
+      } catch (err) {
+        console.error("Dashboard fetch error:", err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDashboard();
   }, []);
+
+  if (loading) return <SkeletonDashboard />;
 
   return (
     <div className="px-6 pt-10 md:px-15 flex-2 ">
@@ -97,5 +103,44 @@ const Dashboard = () => {
     </div>
   );
 };
+
+const SkeletonDashboard = () => (
+  <div className="px-6 pt-10 md:px-15 flex-2 animate-pulse">
+    <Title
+      title="Admin Dashboard"
+      subTitle="Monitor attendance, employees and leave activity in real-time"
+    />
+    <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 my-8 max-w-5xl">
+      {Array(4)
+        .fill(0)
+        .map((_, i) => (
+          <div
+            key={i}
+            className="h-40 p-4 rounded-md border border-borderColor bg-white shadow-sm flex justify-between items-center"
+          >
+            <div className="space-y-2">
+              <div className="h-4 w-24 bg-gray-200 rounded" />
+              <div className="h-6 w-16 bg-gray-300 rounded" />
+            </div>
+            <div className="w-12 h-12 bg-gray-200 rounded-full" />
+          </div>
+        ))}
+    </div>
+
+    <div className="bg-white p-4 rounded-md border border-borderColor shadow-sm max-w-3xl">
+      <div className="h-5 w-40 bg-gray-200 rounded mb-4" />
+      <div className="space-y-3">
+        {Array(3)
+          .fill(0)
+          .map((_, i) => (
+            <div key={i} className="flex justify-between">
+              <div className="h-4 w-32 bg-gray-200 rounded" />
+              <div className="h-4 w-20 bg-gray-200 rounded" />
+            </div>
+          ))}
+      </div>
+    </div>
+  </div>
+);
 
 export default Dashboard;

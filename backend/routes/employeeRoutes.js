@@ -51,4 +51,42 @@ router.get("/", async (req, res) => {
   }
 });
 
+// ✅ Delete Employee by ID
+router.delete("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const result = await Employee.deleteOne({ _id: id });
+
+    if (result.deletedCount > 0) {
+      res.status(200).json({ message: "Employee deleted successfully" });
+    } else {
+      res.status(404).json({ message: "Employee not found" });
+    }
+  } catch (err) {
+    console.error("Error deleting employee:", err.message);
+    res.status(500).json({ message: "Error deleting employee" });
+  }
+});
+
+// ✅ Update Employee by ID (NEWLY ADDED)
+router.put("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updatedData = req.body;
+
+    const updatedEmployee = await Employee.findByIdAndUpdate(id, updatedData, {
+      new: true,
+    });
+
+    if (!updatedEmployee) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+
+    res.status(200).json(updatedEmployee);
+  } catch (err) {
+    console.error("Error updating employee:", err.message);
+    res.status(500).json({ message: "Error updating employee" });
+  }
+});
+
 export default router;
