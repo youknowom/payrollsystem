@@ -22,7 +22,7 @@ const ResizableNavbar = () => {
           <img
             src={logo}
             alt="Payroll Logo"
-            className="w-10 h-10 object-contain"
+            className="w-auto h-10 object-contain"
           />
         </a>
 
