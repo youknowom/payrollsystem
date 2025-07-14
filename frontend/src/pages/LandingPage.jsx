@@ -23,7 +23,7 @@ const features = [
 const LandingPage = () => {
   return (
     <>
-      {/* ✅ Simple Navbar */}
+      {/* Navbar */}
       <ResizableNavbar />
 
       {/* Hero Section */}
@@ -43,13 +43,6 @@ const LandingPage = () => {
             Get Started
           </a>
         </div>
-
-        {/* Optional Illustration */}
-        <img
-          src={logo}
-          alt="Payroll illustration"
-          className="mx-auto mt-10 w-full max-w-md"
-        />
       </section>
 
       {/* Features Section */}
