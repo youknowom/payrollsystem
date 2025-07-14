@@ -1,22 +1,6 @@
-import React, { useState } from "react";
-import {
-  Navbar,
-  NavBody,
-  NavItems,
-  MobileNav,
-  MobileNavHeader,
-  MobileNavToggle,
-  MobileNavMenu,
-  NavbarLogo,
-  NavbarButton,
-} from "../components/ui/ResizableNavbar";
-
-const navLinks = [
-  { name: "Home", link: "#" },
-  { name: "Features", link: "#" },
-  { name: "Pricing", link: "#" },
-  { name: "Contact", link: "#" },
-];
+import React from "react";
+import logo from "../assets/logo.png";
+import ResizableNavbar from "../components/ui/ResizableNavbar";
 
 const features = [
   {
@@ -37,41 +21,10 @@ const features = [
 ];
 
 const LandingPage = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
     <>
-      {/* Top Navigation */}
-      <Navbar>
-        <NavBody>
-          <NavbarLogo />
-          <NavItems items={navLinks} />
-          <NavbarButton variant="gradient" href="/admin">
-            Admin Login
-          </NavbarButton>
-        </NavBody>
-
-        <MobileNav>
-          <MobileNavHeader>
-            <NavbarLogo />
-            <MobileNavToggle
-              isOpen={isOpen}
-              onClick={() => setIsOpen(!isOpen)}
-            />
-          </MobileNavHeader>
-
-          <MobileNavMenu isOpen={isOpen} onClose={() => setIsOpen(false)}>
-            {navLinks.map((item, idx) => (
-              <a key={idx} href={item.link} className="text-sm font-medium">
-                {item.name}
-              </a>
-            ))}
-            <NavbarButton href="/admin" variant="gradient" className="mt-2">
-              Admin Login
-            </NavbarButton>
-          </MobileNavMenu>
-        </MobileNav>
-      </Navbar>
+      {/* ✅ Simple Navbar */}
+      <ResizableNavbar />
 
       {/* Hero Section */}
       <section className="w-full bg-gradient-to-br from-blue-50 via-white to-blue-100 py-24 px-4 text-center">
@@ -83,18 +36,17 @@ const LandingPage = () => {
             All-in-one solution to manage attendance, employees, and salary
             payouts for your organization.
           </p>
-          <NavbarButton
+          <a
             href="/admin"
-            variant="gradient"
-            className="text-lg px-6 py-3"
+            className="text-lg px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
           >
             Get Started
-          </NavbarButton>
+          </a>
         </div>
 
         {/* Optional Illustration */}
         <img
-          src="https://cdni.iconscout.com/illustration/premium/thumb/hr-management-6128554-5032699.png"
+          src={logo}
           alt="Payroll illustration"
           className="mx-auto mt-10 w-full max-w-md"
         />
