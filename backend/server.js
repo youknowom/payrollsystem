@@ -5,6 +5,7 @@ import connectDB from "./configs/db.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import employeeRoutes from "./routes/employeeRoutes.js";
 import dashboardRoutes from "./routes/dashboard.js";
+import adminAuthRoutes from "./routes/adminAuthRoutes.js";
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use("/api/admin", adminRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/admin/auth", adminAuthRoutes);
 
 app.get("/", (req, res) => res.send("server is running!"));
 

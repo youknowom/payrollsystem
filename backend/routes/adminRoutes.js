@@ -5,7 +5,7 @@ import fs from "fs";
 import Admin from "../models/Admin.js";
 
 const router = express.Router();
-const upload = multer({ dest: "uploads/" }); // temp local upload
+const upload = multer({ dest: "uploads/" });
 
 router.post("/update", upload.single("image"), async (req, res) => {
   const { name } = req.body;
@@ -22,7 +22,7 @@ router.post("/update", upload.single("image"), async (req, res) => {
         fileName: `${Date.now()}-${file.originalname}`,
       });
 
-      fs.unlinkSync(file.path); // Clean temp file
+      fs.unlinkSync(file.path);
       imageUrl = imgUploadRes.url;
     }
 
