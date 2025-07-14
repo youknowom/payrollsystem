@@ -15,7 +15,7 @@ const Login = ({ setShowLogin }) => {
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
-    /* basic client‑side validation (register only) */
+    // basic client‑side validation (for register only)
     if (mode === "register") {
       if (!name || !email || !password) {
         toast.error("Please fill all the fields");
@@ -31,15 +31,15 @@ const Login = ({ setShowLogin }) => {
       const payload =
         mode === "register" ? { name, email, password } : { email, password };
 
-      // 🔗 call backend
+      // 🔗 call backend (now hitting /api/auth)
       const { data } = await axios.post(
-        `/api/employees/${mode === "login" ? "login" : "register"}`,
-        payload,
-        { withCredentials: true } // keep cookies if you ever add them
+        `/auth/${mode === "login" ? "login" : "register"}`,
+        payload
       );
 
       if (data.success) {
         localStorage.setItem("token", data.token);
+
         toast.success(
           mode === "login"
             ? "Logged in successfully"
@@ -49,11 +49,9 @@ const Login = ({ setShowLogin }) => {
         setShowLogin(false); // close modal
         navigate("/admin"); // redirect to admin panel
       } else {
-        // backend returned success: false
         toast.error(data.message || "Something went wrong");
       }
     } catch (err) {
-      // network / validation / 4xx / 5xx
       const msg =
         err.response?.data?.message ||
         err.message ||
@@ -75,7 +73,7 @@ const Login = ({ setShowLogin }) => {
       >
         <p className="text-2xl font-medium text-center w-full">
           <span className="text-primary">User</span>{" "}
-          {mode === "login" ? "Login" : "Sign Up"}
+          {mode === "login" ? "Login" : "Sign Up"}
         </p>
 
         {mode === "register" && (

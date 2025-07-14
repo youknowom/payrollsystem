@@ -1,11 +1,12 @@
-// routes/adminAuthRoutes.js
-
+// routes/authRoutes.js
 import express from "express";
-import { loginAdmin } from "../controllers/AdminController.js"; // You'll define this next
+import { register, login, getMe } from "../controllers/authController.js";
+import { protect } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// Admin Login
-router.post("/login", loginAdmin);
+router.post("/register", register);
+router.post("/login", login);
+router.get("/me", protect, getMe); // ✅ return logged-in user
 
 export default router;
