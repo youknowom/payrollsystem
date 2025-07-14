@@ -7,7 +7,18 @@ import employeeRoutes from "./routes/employeeRoutes.js";
 import dashboardRoutes from "./routes/dashboard.js";
 
 const app = express();
-app.use(cors());
+
+// ✅ Fixed CORS: Allow local + Vercel frontend
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173", // for local frontend dev
+      "https://payroll-management-system-omkar.vercel.app", // for deployed frontend
+    ],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 app.use("/api/admin", adminRoutes);
