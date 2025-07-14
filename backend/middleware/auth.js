@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import Employee from "../models/Employee.js";
+import EmployeeAuth from "../models/EmployeeAuth.js"; // Use EmployeeAuth model
 
 export const protect = async (req, res, next) => {
   const token = req.headers.authorization;
@@ -13,7 +13,7 @@ export const protect = async (req, res, next) => {
       return res.status(401).json({ success: false, message: "Invalid token" });
     }
 
-    req.user = await Employee.findById(decoded.id).select("-password");
+    req.user = await EmployeeAuth.findById(decoded.id).select("-password");
     next();
   } catch (error) {
     res.status(401).json({ success: false, message: "Not authorized" });
