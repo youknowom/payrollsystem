@@ -1,7 +1,12 @@
 import React from "react";
 import logo from "../assets/logo.png";
 import ResizableNavbar from "../components/ui/ResizableNavbar";
-
+// import {
+//   SignedIn,
+//   SignedOut,
+//   SignInButton,
+//   UserButton,
+// } from "@clerk/clerk-react";
 const features = [
   {
     title: "Attendance Tracking",
@@ -36,12 +41,22 @@ const LandingPage = () => {
             All-in-one solution to manage attendance, employees, and salary
             payouts for your organization.
           </p>
-          <a
+          {/* <a
             href="/admin"
             className="text-lg px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
           >
             Get Started
-          </a>
+          </a> */}
+          {/* <SignedOut>
+            <SignInButton mode="modal">
+              <button className="ml-4 rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition">
+                Get Started
+              </button>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <UserButton afterSignOutUrl="/" />
+          </SignedIn> */}
         </div>
       </section>
 

@@ -1,9 +1,10 @@
+// src/components/ui/ResizableNavbar.jsx
 "use client";
-
 import React, { useState } from "react";
 import logo from "../../assets/logo.png";
 import { IconMenu2, IconX } from "@tabler/icons-react";
-import Login from "../../pages/Login";
+import { SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
+import CustomUserMenu from "../CustomUserMenu"; // ← correct path (one level up)
 
 const navLinks = [
   { name: "Home", link: "#" },
@@ -14,79 +15,93 @@ const navLinks = [
 
 const ResizableNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
+        {/* Logo */}
         <a href="/" className="flex items-center gap-3">
           <img
             src={logo}
             alt="Payroll Logo"
-            className="w-auto h-6 object-contain"
+            className="h-6 w-auto object-contain"
           />
         </a>
-        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium text-black dark:text-black">
-          {navLinks.map((link, idx) => (
+
+        {/* Desktop nav */}
+        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium text-black">
+          {navLinks.map((link) => (
             <a
-              key={idx}
+              key={link.name}
               href={link.link}
               className="hover:text-blue-600 transition"
             >
               {link.name}
             </a>
           ))}
-          <button
-            onClick={() => setShowLogin(true)}
-            className="ml-4 rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition"
-          >
-            Login
-          </button>
+
+          {/* Auth buttons */}
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button className="ml-4 rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition cursor-pointer">
+                Login
+              </button>
+            </SignInButton>
+          </SignedOut>
+
+          {/* Custom dropdown (avatar + menu) */}
+          <SignedIn>
+            <CustomUserMenu />
+          </SignedIn>
         </nav>
 
-        {/* Mobile Toggle */}
+        {/* Mobile menu toggle */}
         <div className="md:hidden">
           {isOpen ? (
             <IconX
               onClick={() => setIsOpen(false)}
-              className="w-6 h-6 cursor-pointer text-black dark:text-black"
+              className="w-6 h-6 cursor-pointer text-black"
             />
           ) : (
             <IconMenu2
               onClick={() => setIsOpen(true)}
-              className="w-6 h-6 cursor-pointer text-black dark:text-black"
+              className="w-6 h-6 cursor-pointer text-black"
             />
           )}
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile nav */}
       {isOpen && (
         <div className="md:hidden bg-white px-4 pb-4 shadow-md space-y-2">
-          {navLinks.map((link, idx) => (
+          {navLinks.map((link) => (
             <a
-              key={idx}
+              key={link.name}
               href={link.link}
-              className="block py-2 text-sm font-medium text-black hover:text-blue-600"
+              className="block py-2 text-sm font-medium hover:text-blue-600"
               onClick={() => setIsOpen(false)}
             >
               {link.name}
             </a>
           ))}
-          <button
-            onClick={() => {
-              setIsOpen(false);
-              setShowLogin(true);
-            }}
-            className="block w-full rounded-md bg-blue-600 px-4 py-2 text-center text-white hover:bg-blue-700"
-          >
-            Login
-          </button>
+
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button
+                onClick={() => setIsOpen(false)}
+                className="block w-full rounded-md bg-blue-600 px-4 py-2 text-center text-white hover:bg-blue-700"
+              >
+                Login
+              </button>
+            </SignInButton>
+          </SignedOut>
+
+          <SignedIn>
+            {/* Custom dropdown also works fine on mobile – keep it simple */}
+            <CustomUserMenu />
+          </SignedIn>
         </div>
       )}
-
-      {/* Login Modal */}
-      {showLogin && <Login setShowLogin={setShowLogin} />}
     </header>
   );
 };

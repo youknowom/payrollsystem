@@ -1,76 +1,64 @@
+// src/pages/Admin/Profileedit.jsx
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { updateUser } from "../../redux/userSlice";
-import { toast } from "react-hot-toast";
+import { useUser } from "@clerk/clerk-react";
+import { useNavigate } from "react-router-dom";
 import { Upload } from "lucide-react";
+import toast from "react-hot-toast";
 
 const Profileedit = () => {
-  const dispatch = useDispatch();
-  const [name, setName] = useState("");
-  const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState("");
+  const { user, isLoaded } = useUser();
+  const navigate = useNavigate();
 
-  // Generate preview from selected image
+  const [firstName, setFirstName] = useState(user?.firstName || "");
+  const [lastName, setLastName] = useState(user?.lastName || "");
+  const [image, setImage] = useState(null); // File
+  const [preview, setPreview] = useState(""); // URL for <img />
+
+  /* ---------- create / revoke preview URL ---------- */
   useEffect(() => {
     if (!image) {
       setPreview("");
       return;
     }
-
-    const objectUrl = URL.createObjectURL(image);
-    setPreview(objectUrl);
-
-    return () => URL.revokeObjectURL(objectUrl);
+    const url = URL.createObjectURL(image);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
   }, [image]);
 
-  const handleSubmit = async (e) => {
+  if (!isLoaded) return null; // Clerk still loading
+
+  /* --------------- save handler --------------- */
+  const onSave = async (e) => {
     e.preventDefault();
-
-    if (!name && !image) {
-      toast.error("Please provide at least one value to update");
-      return;
-    }
-
-    const formData = new FormData();
-    if (name) formData.append("name", name);
-    if (image) formData.append("image", image);
-
     try {
-      const res = await fetch("http://localhost:5000/api/admin/update", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        dispatch(
-          updateUser({ name: data.admin.name, image: data.admin.image })
-        );
-        toast.success("Profile updated!");
-        setName("");
-        setImage(null);
-      } else {
-        toast.error(data.error || "Update failed");
+      // Update name if changed
+      if (firstName !== user.firstName || lastName !== user.lastName) {
+        await user.update({ firstName, lastName });
       }
+      // Update avatar
+      if (image) {
+        await user.setProfileImage({ file: image });
+      }
+      toast.success("Profile updated!");
+      navigate("/admin"); // back to dashboard
     } catch (err) {
-      toast.error("Something went wrong");
-      console.error("Update error:", err);
+      console.error(err);
+      toast.error(err?.errors?.[0]?.message || "Update failed");
     }
   };
 
+  /* --------------- UI --------------- */
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 border rounded shadow">
-      <h2 className="text-xl font-semibold mb-4">Edit Profile</h2>
+    <div className="max-w-md mx-auto mt-10 p-6 border rounded shadow bg-white">
+      <h2 className="text-xl font-semibold mb-6">Edit Profile</h2>
 
-      {/* Profile Picture Preview */}
-      <div className="flex items-center gap-4 mb-4">
-        <label htmlFor="admin-image" className="cursor-pointer">
+      {/* fancy upload row (same as your employee form) */}
+      <div className="flex items-center gap-4 mb-6">
+        <label htmlFor="image-file" className="cursor-pointer">
           {preview ? (
             <img
               src={preview}
-              alt="admin profile"
-              className="h-16 w-16 object-cover rounded-full border"
+              className="w-16 h-16 rounded-full object-cover border"
             />
           ) : (
             <div className="w-16 h-16 flex items-center justify-center border rounded-full bg-gray-100">
@@ -78,31 +66,40 @@ const Profileedit = () => {
             </div>
           )}
           <input
-            id="admin-image"
+            id="image-file"
             type="file"
-            name="admin-image"
             accept="image/*"
             hidden
             onChange={(e) => setImage(e.target.files[0])}
           />
         </label>
+        <p className="text-sm text-gray-700">Upload your photo</p>
       </div>
 
-      {/* Name + Submit */}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      {/* name form */}
+      <form onSubmit={onSave} className="flex flex-col gap-4">
         <input
           type="text"
-          placeholder="Enter new name"
+          placeholder="First name"
           className="border p-2 rounded"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Last name"
+          className="border p-2 rounded"
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          required
         />
 
         <button
           type="submit"
-          className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+          className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-700 transition cursor-pointer"
         >
-          Update Profile
+          Save Changes
         </button>
       </form>
     </div>

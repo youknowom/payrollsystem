@@ -1,56 +1,49 @@
-import React, { useState } from "react";
+// src/components/Navbar.jsx
+import React from "react";
+import { useUser } from "@clerk/clerk-react";
 import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import toast from "react-hot-toast";
-import logo from "../assets/logo.png"; // your logo
+
+import logo from "../assets/logo.png";
+import CustomUserMenu from "./CustomUserMenu";
+
+const fallbackImg =
+  "https://ui-avatars.com/api/?name=Admin&background=random&color=fff";
 
 const Navbar = () => {
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.user); // { name, image }
+  /* Clerk user */
+  const { user, isLoaded } = useUser();
 
-  const [imgError, setImgError] = useState(false);
-
-  const fallbackImg =
-    "https://ui-avatars.com/api/?name=Admin&background=random&color=fff";
-
-  const logout = () => {
-    toast.success("Logged out successfully!");
-    // Add your logout dispatch or redirect logic here
-  };
+  /* Greeting & avatar fallback */
+  const displayName = isLoaded ? user?.fullName || "Admin" : "Admin";
+  const avatarUrl = isLoaded ? user?.imageUrl || fallbackImg : fallbackImg;
 
   return (
-    <div className="flex items-center justify-between px-6 md:px-10 py-4 text-gray-500 border-b border-borderColor">
-      {/* Logo */}
+    <header className="flex items-center justify-between px-6 md:px-10 py-4 border-b border-borderColor bg-white">
+      {/* ─── Logo (click → /admin) ─────────────────────────────── */}
       <Link to="/admin">
         <img src={logo} alt="Logo" className="h-7" />
       </Link>
 
-      {/* Right: Welcome + Avatar + Logout */}
+      {/* ─── Greeting + avatar / menu ──────────────────────────── */}
       <div className="flex items-center gap-4 ml-auto">
-        <p className="text-sm text-right">
-          Welcome,{" "}
-          <span className="font-medium text-black">
-            {user?.name || "Admin"}
-          </span>
+        <p className="text-sm text-gray-700">
+          Welcome,&nbsp;
+          <span className="font-medium">{displayName}</span>
         </p>
 
-        {/* Avatar */}
-        <img
-          className="w-8 h-8 rounded-full object-cover border border-gray-300"
-          src={!imgError && user?.image ? user.image : fallbackImg}
-          onError={() => setImgError(true)}
-          alt="User Avatar"
-        />
-
-        {/* Logout Button */}
-        <button
-          onClick={logout}
-          className="text-sm px-4 py-2 rounded bg-primary text-white hover:bg-blue-800 transition"
-        >
-          Logout
-        </button>
+        {/* While Clerk is loading, just show the static img.  
+            Once loaded, show our custom dropdown component */}
+        {isLoaded ? (
+          <CustomUserMenu /> /* ← custom dropdown (avatar inside) */
+        ) : (
+          <img
+            src={avatarUrl}
+            alt="avatar"
+            className="w-8 h-8 rounded-full object-cover border border-gray-300"
+          />
+        )}
       </div>
-    </div>
+    </header>
   );
 };
 
